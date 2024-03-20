@@ -12,9 +12,7 @@ stratis:
   overprovision: true
   devices:
     - "/dev/md/{{ raid.name }}"
-  encryption:
-    key_desc: mykey
-    key_data: redhat123
+  encryption: "{{ stratis_encryption_key }}"
   file_systems:
     - name: test1
       size: "{{ 1000 * 1000 * 1000 * 2 }}"
