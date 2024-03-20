@@ -55,13 +55,15 @@ There's several aspects to monitor, but it's beyond the scope of this project
 to be prescriptive. However, there are areas of focus and some commands that
 are useful.
 
-* [Zabbix][zabbix] is a great monitoring tool with a lot of features.
 * You could configure [Ansible Automation Platform][aap] to run playbooks to collect metric information and then alert on it.
+* [Performance Co-Pilot][pcp] can capture performance metrics, send to logs, or somewhere else.
+* [Zabbix][zabbix] is a great monitoring tool with a lot of features.
 * [Splunk][splunk] could also consume all the logs on the system, and you could set up alerts.
 * And finally, you could setup [grafana, prometheus, and node exporter][grafana] (I haven't done this, but it looks cool).
 
-[zabbix]: https://www.zabbix.com/index
 [aap]: https://www.redhat.com/en/technologies/management/ansible
+[pcp]: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/monitoring_and_managing_system_status_and_performance/setting-up-pcp_monitoring-and-managing-system-status-and-performance
+[zabbix]: https://www.zabbix.com/index
 [splunk]: https://www.splunk.com/
 [grafana]: https://grafana.com/docs/grafana-cloud/send-data/metrics/metrics-prometheus/prometheus-config-examples/noagent_linuxnode/
 
