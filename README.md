@@ -58,7 +58,7 @@ are useful.
 * [Zabbix][zabbix] is a great monitoring tool with a lot of features.
 * You could configure [Ansible Automation Platform][aap] to run playbooks to collect metric information and then alert on it.
 * [Splunk][splunk] could also consume all the logs on the system, and you could set up alerts.
-* And finally, you could setup setup [grafana, prometheus, and node exporter][grafana] (I haven't done this, but it looks cool).
+* And finally, you could setup [grafana, prometheus, and node exporter][grafana] (I haven't done this, but it looks cool).
 
 [zabbix]: https://www.zabbix.com/index
 [aap]: https://www.redhat.com/en/technologies/management/ansible
