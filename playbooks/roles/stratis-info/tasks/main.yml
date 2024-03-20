@@ -1,0 +1,67 @@
+---
+# tasks file for stratis-info
+- name: validate name
+  ansible.builtin.assert:
+    that:
+      - stratis.name is defined
+      - stratis.name | length > 0
+    fail_msg: "stratis.name must be defined"
+
+- name: validate devices
+  ansible.builtin.assert:
+    that:
+      - stratis.devices is defined
+      - stratis.devices | length > 0
+    fail_msg: "stratis.devices must be defined"
+
+- name: validate encryption
+  ansible.builtin.assert:
+    that: |
+      (stratis.encryption is not defined) or
+      (stratis.encryption is defined and 
+        stratis.encryption.key_desc is defined and stratis.encryption.key_desc | length > 0 and
+        stratis.encryption.key_data is defined and stratis.encryption.key_data | length > 0)
+    fail_msg: "stratis.encryption was defined, but key_desc or key_data was not"
+
+- name: validate state
+  ansible.builtin.assert:
+    that: |
+      (stratis.state is not defined) or
+      (stratis.state is defined and stratis.state in [ 'present' ])
+    fail_msg: "stratis.state must be omitted, or set to 'present'"
+
+- name: validate file systems
+  ansible.builtin.assert:
+    that: |
+      (stratis.file_systems is not defined) or
+      (stratis.file_systems is defined and stratis.file_systems | length == 0) or
+      (stratis.file_systems is defined and stratis.file_systems | length > 0 and
+        (stratis.file_systems | selectattr('name') | length == stratis.file_systems | length)
+        )
+    fail_msg: "stratis.file_systems was defined, but file_systems[].name was not defined for all entries"
+
+- name: set defaults
+  set_fact:
+    stratis:
+      name: "{{ stratis.name }}"
+      state: "{{ stratis.state | default('present') }}"
+      devices: "{{ stratis.devices }}"
+      overprovision: "{{ stratis.overprovision | default(False) }}"
+      encryption: "{{ stratis.encryption | default(omit) }}"
+      file_systems: "{{ stratis.file_systems }}"
+
+- name: read stratis info
+  ansible.builtin.command: "stratis report"
+  changed_when: false
+  register: stratis_info
+
+- name: coerce stratis info to json
+  set_fact:
+    stratis_info: "{{ stratis_info.stdout | from_json }}"
+
+- name: test for startis pool
+  set_fact:
+    stratis_pool: "{{ stratis_info.pools | selectattr('name', 'eq', stratis.name) | first | default([]) }}"
+
+- debug:
+    var: stratis_pool

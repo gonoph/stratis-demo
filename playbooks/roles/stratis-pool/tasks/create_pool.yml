@@ -1,0 +1,15 @@
+---
+- name: create key
+  ansible.builtin.include_role:
+    name: stratis-key
+
+- name: prepare devices with wipe
+  ansible.builtin.command: "wipefs -a {{ item }}"
+  loop: "{{ stratis.devices }}"
+
+- name: create pool
+  ansible.builtin.command: "stratis pool create {{ keydesc }} {{ overpro }} {{ stratis.name }} {{ devices }}"
+  vars:
+    keydesc: "{% if stratis.encryption is defined and stratis.encryption.key_desc %}--key-desc {{ stratis.encryption.key_desc }}{%endif%}"
+    overpro: "{% if not stratis.overprovision %}--no-overprovision{%endif%}"
+    devices: "{{ stratis.devices | join(' ') }}"

@@ -1,0 +1,44 @@
+---
+# tasks file for stratis-filesystem
+
+- debug:
+    var: stratis_pool
+
+- name: create file system
+  ansible.builtin.command:
+    cmd: "stratis fs create --size {{ fs.size }}B {{ stratis.name }} {{ fs.name }}"
+    creates: "/dev/stratis/{{ stratis.name }}/{{ item.name }}"
+  loop: "{{ stratis.file_systems | default([]) }}"
+  vars:
+    fs:
+      name: "{{ item.name }}"
+      size: "{{ item.size | default(1000 * 1000 * 1000 * 2) }}"
+      mount_point: "{{ item.mount_point | default('') }}"
+  when:
+    - stratis.state is defined
+    - stratis.state == 'present'
+    - stratis.file_systems is defined
+    - stratis.file_systems
+    - stratis_pool is defined
+    - item.name is defined
+    - item.name
+
+- name: mount file system
+  ansible.posix.mount:
+    path: "{{ item.mount_point }}"
+    src: "/dev/stratis/{{ stratis.name }}/{{ item.name }}"
+    fstype: xfs
+    opts: defaults
+    state: mounted
+  loop: "{{ stratis.file_systems | default([]) }}"
+  notify: systemctl daemon-reload
+  when:
+    - stratis.state is defined
+    - stratis.state == 'present'
+    - stratis.file_systems is defined
+    - stratis.file_systems
+    - stratis_pool is defined
+    - item.name is defined
+    - item.name
+    - item.mount_point is defined
+    - item.mount_point

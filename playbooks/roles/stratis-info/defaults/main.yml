@@ -1,0 +1,14 @@
+---
+# defaults file for stratis-info
+stratis:
+  name: pool
+  state: present
+  devices: []
+  overprovision: false
+  encryption: {}
+    # key_desc: mykey
+    # key_data: redhat123
+  file_systems: []
+    # - name: test1
+    #   size: "{{ 1000 * 1000 * 1000 * 2 }}"
+    #   mount_point: /mnt/test1

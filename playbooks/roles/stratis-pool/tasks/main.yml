@@ -1,0 +1,10 @@
+---
+# tasks file for stratis-pool
+
+- name: state is present
+  ansible.builtin.include_tasks:
+    file: create_pool.yml
+  when:
+    - stratis.state is defined
+    - stratis.state == 'present'
+    - not stratis_pool

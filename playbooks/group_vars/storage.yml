@@ -1,0 +1,21 @@
+---
+raid:
+  devices:
+    - nvme1n1
+    - nvme2n1
+  level: 1
+  name: raid0
+
+stratis:
+  name: pool0
+  state: present
+  overprovision: true
+  devices:
+    - "/dev/md/{{ raid.name }}"
+  encryption:
+    key_desc: mykey
+    key_data: redhat123
+  file_systems:
+    - name: test1
+      size: "{{ 1000 * 1000 * 1000 * 2 }}"
+      mount_point: /mnt/test1

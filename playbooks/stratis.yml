@@ -1,0 +1,36 @@
+---
+# dnf install rhel-system-roles.noarch
+# documentation: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_logical_volumes/managing-local-storage-using-rhel-system-roles_configuring-and-managing-logical-volumes#configuring-a-raid-volume-using-the-storage-system-role_managing-local-storage-using-rhel-system-roles
+- name: Create RAID and Stratis devices
+  hosts: storage
+  connection: local
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Create RAID from block devices
+      ansible.builtin.include_role:
+        name: rhel-system-roles.storage
+        apply:
+          tags: [raid]
+      vars:
+        storage_safe_mode: false
+        storage_volumes:
+          - name: raid0
+            type: raid
+            disks: "{{ raid.devices }}"
+            raid_level: "raid{{ raid.level }}"
+            state: present
+      tags: [raid]
+
+    - ansible.builtin.include_role:
+        name: stratis-pool
+        apply:
+          tags: [pool]
+      tags: [pool]
+
+    - ansible.builtin.include_role:
+        name: stratis-filesystem
+        apply:
+          tags: [fs]
+      tags: [fs]

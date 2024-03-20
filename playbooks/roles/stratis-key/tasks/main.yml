@@ -1,0 +1,22 @@
+---
+# tasks file for stratis-key
+- name: create keyfile
+  ansible.builtin.copy:
+    dest: /root/stratis.key
+    owner: root
+    group: root
+    mode: '0600'
+    backup: false
+    content: "{{ stratis.encryption.key_data }}"
+
+- name: add encryption key to kernel
+  ansible.builtin.command: 
+    cmd: "stratis key set {{ stratis.encryption.key_desc }} --keyfile-path /root/stratis.key"
+    creates: /dev/stratis/pool0
+  register: out
+  failed_when:
+    - out.rc != 0
+    - test_line not in out.stderr_lines
+  changed_when: out.rc == 0
+  vars:
+    test_line: "It appears that you issued an unintended command: A key named {{ stratis.encryption.key_desc }} already exists "
