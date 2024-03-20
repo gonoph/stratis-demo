@@ -17,7 +17,7 @@ You can add additional layers, but be mindful of where it sits on the stack. Exa
 
 ## Prerequisites - You will need
 
-* A VM running [RHEL 9.3][rhel]l, which you can run via
+* A VM running [RHEL 9.3][rhel], which you can run via
     * a [developer subscription][rhel-dev]
     * In the public cloud via [PAYG or BYOS][ccsp]
 * Two (2) additional disks / storage attached to the VM of at least 10 GB each.
@@ -50,6 +50,25 @@ dnf install mdadm
 * With [Ansible](/Configure_Ansible.md) aka Automate all the things!
 
 ## Monitoring
+
+There's several aspects to monitor, but it's beyond the scope of this project
+to be prescriptive. However, there are areas of focus and some commands that
+are useful.
+
+* [Zabbix][zabbix] is a great monitoring tool with a lot of features.
+* You could configure [Ansible Automation Platform][aap] to run playbooks to collect metric information and then alert on it.
+* [Splunk][splunk] could also consume all the logs on the system, and you could set up alerts.
+* And finally, you could setup setup [grafana, prometheus, and node exporter][grafana] (I haven't done this, but it looks cool).
+
+[zabbix]: https://www.zabbix.com/index
+[aap]: https://www.redhat.com/en/technologies/management/ansible
+[splunk]: https://www.splunk.com/
+[grafana]: https://grafana.com/docs/grafana-cloud/send-data/metrics/metrics-prometheus/prometheus-config-examples/noagent_linuxnode/
+
+A couple of areas need to be monitored:
+
+* Monitoring the RAID.
+* Monitoring the pool allocation.
 
 ### Raid status
 
@@ -93,7 +112,7 @@ Mar 20 05:08:10 ip-172-30-4-223.aws.awesomedemos.net mdadm[209608]: Rebuild72 ev
 Mar 20 05:08:33 ip-172-30-4-223.aws.awesomedemos.net mdadm[209608]: RebuildFinished event detected on md device /dev/md/raid0
 ```
 
-### This provisioning
+### Thin provisioning
 
 Typically you would monitor the file system with `df`, but with thin
 provisioning, the file system is not taking up as much space as if it would if
@@ -136,6 +155,8 @@ pool0   test1        1.86 GiB / 73 MiB / 1.79 GiB   Mar 20 2024 05:07   /dev/str
 ```
 
 ### stratis report
+
+You could easily feed this into an Ansible job for status and metric information.
 
 ```json
 {
