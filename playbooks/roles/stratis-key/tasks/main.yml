@@ -12,7 +12,7 @@
 - name: add encryption key to kernel
   ansible.builtin.command: 
     cmd: "stratis key set {{ stratis.encryption.key_desc }} --keyfile-path /root/stratis.key"
-    creates: /dev/stratis/pool0
+    creates: "/dev/stratis/{{ stratis.name }}"
   register: out
   failed_when:
     - out.rc != 0

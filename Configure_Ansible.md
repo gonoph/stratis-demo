@@ -20,7 +20,7 @@ sudo dnf install rhel-system-roles
 ansible-galaxy collection install -r playbooks/requirements.yml -v
 ```
 
-* edit and modify the variables under `playbooks/group_vars/storage.yml`
+* edit and modify the variables under `playbooks/group_vars/storage/public.yml`
 
 ```yaml
 ---
@@ -37,9 +37,7 @@ stratis:
   overprovision: true
   devices:
     - "/dev/md/{{ raid.name }}"
-  encryption:
-    key_desc: mykey
-    key_data: redhat123
+  encryption: "{{ stratis_encryption_key }}"
   file_systems:
     - name: test1
       size: "{{ 1000 * 1000 * 1000 * 2 }}"
@@ -48,11 +46,14 @@ stratis:
 
 ## Running the playbook
 
-chdir into the playbooks directory and run the playbook
+chdir into the playbooks directory and run the playbook. You will be asked the
+vault password. Here's a hint.
+
+> "12345? Amazing. I have the same combination on my luggage." -- President Skroob, Spaceballs (1987), Movie.
 
 ```bash
 cd playbooks
-ansible-playbook -i inventory stratis.yml
+ansible-playbook -i inventory stratis.yml --ask-vault-password
 ```
 
 You can also execute portions of the playbook using [tags][tags].
